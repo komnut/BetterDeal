@@ -1,0 +1,17 @@
+{
+  "name": "Better Deal - Price Comparison",
+  "short_name": "Better Deal",
+  "description": "เปรียบเทียบราคา หาตัวเลือกที่คุ้มค่าที่สุด",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#9333ea",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
