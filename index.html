@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Better Deal - Price Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': "blob 7s infinite",
+                    },
+                    keyframes: {
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for specific needs not easily handled by inline utility classes on dynamic elements */
+        .best-deal-highlight {
+            border-color: #10B981 !important; /* Tailwind Emerald-500 */
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.4) !important;
+            background-color: #ECFDF5 !important; /* Emerald-50 */
+        }
+        
+        .badge-winner {
+            display: inline-flex;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800 relative overflow-x-hidden">
+    
+    <!-- Background abstract shapes for premium feel -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-3xl mx-auto px-4 py-12 flex flex-col items-center">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mb-3 drop-shadow-sm">
+                Better Deal
+            </h1>
+            <p class="text-slate-500 font-medium">เปรียบเทียบราคา หาตัวเลือกที่คุ้มค่าที่สุด</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="w-full bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-6 md:p-8">
+            
+            <!-- Items Container -->
+            <div id="items-container" class="space-y-4 mb-6">
+                <!-- Items will be injected here by JS. Initial 2 items hardcoded for SEO and fast loading -->
+                
+                <!-- Item 1 (Cannot be deleted) -->
+                <div class="item-card relative bg-white rounded-2xl p-5 border-2 border-slate-100 shadow-sm transition-all duration-300" data-id="1">
+                    <div class="absolute top-4 right-4 winner-badge hidden bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                        ✨ คุ้มที่สุด
+                    </div>
+                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
+                        สินค้าชิ้นที่ 1
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-500 mb-1">ราคา (บาท)</label>
+                            <input type="number" min="0" step="0.01" class="price-input w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" placeholder="เช่น 150">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-500 mb-1">ปริมาณ/จำนวน</label>
+                            <input type="number" min="0" step="0.01" class="amount-input w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" placeholder="เช่น 100">
+                        </div>
+                    </div>
+                    <div class="mt-3 text-right text-sm text-slate-400 unit-price-display">
+                        ราคาต่อหน่วย: <span class="font-medium text-slate-600">-</span>
+                    </div>
+                </div>
+
+                <!-- Item 2 (Cannot be deleted) -->
+                <div class="item-card relative bg-white rounded-2xl p-5 border-2 border-slate-100 shadow-sm transition-all duration-300" data-id="2">
+                    <div class="absolute top-4 right-4 winner-badge hidden bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                        ✨ คุ้มที่สุด
+                    </div>
+                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+                        สินค้าชิ้นที่ 2
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-500 mb-1">ราคา (บาท)</label>
+                            <input type="number" min="0" step="0.01" class="price-input w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" placeholder="เช่น 199">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-500 mb-1">ปริมาณ/จำนวน</label>
+                            <input type="number" min="0" step="0.01" class="amount-input w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" placeholder="เช่น 150">
+                        </div>
+                    </div>
+                    <div class="mt-3 text-right text-sm text-slate-400 unit-price-display">
+                        ราคาต่อหน่วย: <span class="font-medium text-slate-600">-</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Add Item Button -->
+            <div class="flex justify-center mt-4 mb-8">
+                <button id="add-btn" class="group flex items-center gap-2 text-indigo-600 font-semibold py-2 px-5 rounded-full bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-700 transition-all active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    เพิ่มรายการเปรียบเทียบ
+                </button>
+            </div>
+
+            <!-- Result Summary Area -->
+            <div id="result-summary" class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg transform transition-all duration-500 opacity-90">
+                <div class="text-center">
+                    <p class="text-indigo-100 text-sm font-medium mb-1">ผลการเปรียบเทียบ</p>
+                    <h2 id="result-text" class="text-2xl font-bold">รอข้อมูล...</h2>
+                    <p id="result-subtext" class="text-indigo-100 text-sm mt-2 opacity-0 transition-opacity duration-300">
+                        กรุณากรอกราคาและปริมาณของสินค้าอย่างน้อย 2 รายการ
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        
+        <footer class="mt-12 text-slate-400 text-sm text-center">
+            <p>Made for comparison purposes. Easy to deploy on GitHub Pages.</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
