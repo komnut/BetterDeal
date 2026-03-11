@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const amountInput = card.querySelector('.amount-input').value;
             const unitPriceDisplay = card.querySelector('.unit-price-display span');
             const winnerBadge = card.querySelector('.winner-badge');
-            
+
             // Reset styles
             card.classList.remove('best-deal-highlight');
             winnerBadge.classList.add('hidden');
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const price = parseFloat(priceInput);
                 const amount = parseFloat(amountInput);
                 const unitPrice = price / amount;
-                
+
                 // Format unit price for display
-                unitPriceDisplay.textContent = unitPrice.toLocaleString('th-TH', { 
-                    minimumFractionDigits: 2, 
-                    maximumFractionDigits: 6 
+                unitPriceDisplay.textContent = unitPrice.toLocaleString('th-TH', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 6
                 }) + ' บาท';
 
                 validItems.push({
@@ -82,22 +82,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (validItems.length >= 2) {
             // Sort by unit price ascending
             validItems.sort((a, b) => a.unitPrice - b.unitPrice);
-            
+
             const bestItem = validItems[0];
             const secondBestItem = validItems[1]; // for calculating savings
-            
+
             // Highlight best item
             bestItem.card.classList.add('best-deal-highlight');
             const badge = bestItem.card.querySelector('.winner-badge');
             badge.classList.remove('hidden');
-            
+
             // Trigger reflow to restart animation
             void badge.offsetWidth;
             badge.classList.add('badge-winner');
 
             // Update result text
             resultText.textContent = `สินค้าชิ้นที่ ${bestItem.index} คุ้มที่สุด! 🎉`;
-            
+
             // Calculate how much cheaper it is compared to second best
             if (secondBestItem.unitPrice > bestItem.unitPrice) {
                 const diffPerc = ((secondBestItem.unitPrice - bestItem.unitPrice) / secondBestItem.unitPrice) * 100;
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addBtn.addEventListener('click', () => {
         itemCount++;
         const newItemId = itemCount;
-        
+
         const newCardHTML = `
             <div class="item-card relative bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-all duration-300 transform scale-95 opacity-0 animate-fadeIn" data-id="${newItemId}">
                 <div class="absolute top-4 right-4 winner-badge hidden bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         itemsContainer.insertAdjacentHTML('beforeend', newCardHTML);
         const newCard = itemsContainer.lastElementChild;
-        
+
         // Trigger reflow for animation
         void newCard.offsetWidth;
         newCard.classList.remove('scale-95', 'opacity-0');
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Attach listeners to new inputs
         attachListeners(newCard);
-        
+
         // Setup delete button
         const deleteBtn = newCard.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', () => {
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 2; i < allCards.length; i++) {
             allCards[i].remove();
         }
-        
+
         // Reset count
         itemCount = 2;
         reindexCards();
@@ -224,16 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.item-card').forEach((card) => {
             // Update the number in the circle badge
             const circleBadge = card.querySelector('h3 span');
-            if(circleBadge) circleBadge.textContent = displayIndex;
-            
+            if (circleBadge) circleBadge.textContent = displayIndex;
+
             // Update the text node part of the H3 header carefully without breaking HTML structure
             const h3 = card.querySelector('h3');
-            
+
             h3.childNodes.forEach(node => {
                 // If it's a direct text node starting with our prefix
                 if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().startsWith('สินค้าชิ้นที่')) {
                     node.textContent = ` สินค้าชิ้นที่ ${displayIndex} `;
-                } 
+                }
             });
             displayIndex++;
         });
