@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const itemsContainer = document.getElementById('items-container');
     const addBtn = document.getElementById('add-btn');
+    const clearBtn = document.getElementById('clear-btn');
     const resultText = document.getElementById('result-text');
     const resultSubtext = document.getElementById('result-subtext');
 
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="number" min="0" step="0.01" class="amount-input w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" placeholder="เช่น 100">
                     </div>
                 </div>
+                <!-- Delete Button Container -->
                 <div class="mt-3 flex justify-between items-center">
                     <button class="delete-btn flex items-center gap-1 text-slate-400 hover:text-red-500 transition-colors px-2 py-1 rounded-lg hover:bg-red-50 text-sm" aria-label="Delete item">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -130,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </svg>
                         ลบ
                     </button>
+                    <!-- Unit Price display inside flex container -->
                     <div class="text-right text-sm text-slate-400 unit-price-display">
                         ราคาต่อหน่วย: <span class="font-medium text-slate-600">-</span>
                     </div>
@@ -137,20 +140,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Temporarily append HTML, then add animation classes
         itemsContainer.insertAdjacentHTML('beforeend', newCardHTML);
         const newCard = itemsContainer.lastElementChild;
         
-        // Trigger reflow
+        // Trigger reflow for animation
         void newCard.offsetWidth;
         newCard.classList.remove('scale-95', 'opacity-0');
         newCard.classList.add('scale-100', 'opacity-100');
 
-        // Attach listeners to new elements
+        // Attach listeners to new inputs
         attachListeners(newCard);
         
-        // Attach delete listener
-        newCard.querySelector('.delete-btn').addEventListener('click', () => {
+        // Setup delete button
+        const deleteBtn = newCard.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => {
             // Animate out
             newCard.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
@@ -160,49 +163,50 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300); // Wait for transition
         });
 
-        // Scroll to the new item smoothly if not fully in view
+        // Scroll to new item gently
         newCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    // Clear Button Logic
+    clearBtn.addEventListener('click', () => {
+        // Remove extra cards beyond the first 2
+        const allCards = document.querySelectorAll('.item-card');
+        for (let i = 2; i < allCards.length; i++) {
+            allCards[i].remove();
+        }
+        
+        // Reset count
+        itemCount = 2;
+        reindexCards();
+
+        // Clear values in remaining cards
+        document.querySelectorAll('.item-card').forEach(card => {
+            card.querySelector('.price-input').value = '';
+            card.querySelector('.amount-input').value = '';
+        });
+
+        calculateBestDeal();
     });
 
     // Helper to re-number the cards displayed (e.g. 1, 2, 3...) when one is deleted
     const reindexCards = () => {
-        const titleSpans = document.querySelectorAll('.item-card h3 span');
-        const titleNodes = document.querySelectorAll('.item-card h3');
-        
         let displayIndex = 1;
         document.querySelectorAll('.item-card').forEach((card) => {
-            // Re-number badge
+            // Update the number in the circle badge
             const circleBadge = card.querySelector('h3 span');
             if(circleBadge) circleBadge.textContent = displayIndex;
             
-            // Re-number text, preserving internal HTML structure
-            // Need to carefully update just the text node part
+            // Update the text node part of the H3 header carefully without breaking HTML structure
             const h3 = card.querySelector('h3');
             
-            // We know the pattern: h3 contains:
-            // 1. span / button elements
-            // 2. text node "สินค้าชิ้นที่ X"
-            // Let's just grab the flex container if it exists (for new items) or the h3 itself (for old)
-            // A simpler way: we just let the numbering circle act as the index, and leave the text alone to avoid breaking DOM.
-            // Oh wait, I want "สินค้าชิ้นที่ X" to be updated.
-            
-            // Let's replace the text content carefully by traversing childnodes
             h3.childNodes.forEach(node => {
+                // If it's a direct text node starting with our prefix
                 if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().startsWith('สินค้าชิ้นที่')) {
                     node.textContent = ` สินค้าชิ้นที่ ${displayIndex} `;
-                } else if (node.nodeType === 1 && node.classList.contains('flex')) {
-                    // For dynamically added items, it's wrapped in a flex div
-                    node.childNodes.forEach(child => {
-                        if (child.nodeType === Node.TEXT_NODE && child.textContent.trim().startsWith('สินค้าชิ้นที่')) {
-                            child.textContent = ` สินค้าชิ้นที่ ${displayIndex}`;
-                        }
-                    });
-                }
+                } 
             });
             displayIndex++;
         });
-        
-        // Don't reset itemCount though, so internal IDs stay unique
+        // We do *not* decrement itemCount, just reindex display numbers so internal IDs stay unique
     };
-
 });
