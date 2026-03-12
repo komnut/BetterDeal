@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Better Deal - Price Comparison</title>
+    <title>Better Deal - เปรียบเทียบราคา</title>
     
-    <!-- PWA & iOS Support -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#9333ea">
+    <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="favicon.svg">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Better Deal">
     
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -25,54 +23,30 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                     },
-                    animation: {
-                        'blob': "blob 7s infinite",
-                    },
-                    keyframes: {
-                        blob: {
-                            "0%": { transform: "translate(0px, 0px) scale(1)" },
-                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
-                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
-                            "100%": { transform: "translate(0px, 0px) scale(1)" },
-                        }
-                    }
                 }
             }
         }
     </script>
     <style>
-        /* Custom styles for specific needs not easily handled by inline utility classes on dynamic elements */
+        /* Keep number inputs without arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
         .best-deal-highlight {
-            border-color: #10B981 !important;
-            /* Tailwind Emerald-500 */
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.4) !important;
-            background-color: #ECFDF5 !important;
-            /* Emerald-50 */
+            border-color: #10B981 !important; /* Emerald 500 */
+            background-color: #f2fdf4 !important; /* light emerald */
         }
-
-        .badge-winner {
-            display: inline-flex;
-            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes bounceIn {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .dark .best-deal-highlight {
+            border-color: #059669 !important; /* Emerald 600 */
+            background-color: #064e3b !important; /* dark emerald */
         }
     </style>
     <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -81,180 +55,107 @@
     </script>
 </head>
 
-<body
-    class="bg-slate-50 dark:bg-slate-900 min-h-screen font-sans text-slate-800 dark:text-slate-100 relative overflow-x-hidden transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans text-gray-900 dark:text-gray-100 antialiased transition-colors duration-300">
 
-    <!-- Theme Toggle Button -->
-    <button id="theme-toggle"
-        class="absolute top-4 right-4 z-50 p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors shadow-sm focus:outline-none">
-        <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    <button id="theme-toggle" class="fixed top-4 right-4 z-50 p-1.5 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <svg id="theme-icon-dark" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
         </svg>
-        <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        <svg id="theme-icon-light" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
         </svg>
     </button>
 
-    <!-- Background abstract shapes for premium feel -->
-    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div
-            class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob">
+    <main class="max-w-xl mx-auto px-2 py-6 pb-24 flex flex-col min-h-screen">
+        
+        <!-- Column Headers -->
+        <div class="grid grid-cols-[auto_1fr_1fr_auto] gap-x-2 px-3 w-full mb-2 mt-4">
+            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-6 text-center text-center">No.</div>
+            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ราคา (฿)</div>
+            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ปริมาณ</div>
+            <div class="w-6"></div> <!-- Spacer for delete button -->
         </div>
-        <div
-            class="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000">
-        </div>
-        <div
-            class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-4000">
-        </div>
-    </div>
 
-    <!-- Main Content -->
-    <main class="relative z-10 max-w-3xl mx-auto px-4 py-12 flex flex-col items-center">
-
-        <!-- Header -->
-        <header class="text-center mb-10">
-            <h1
-                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mb-3 drop-shadow-sm">
-                Better Deal
-            </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">เปรียบเทียบราคา หาตัวเลือกที่คุ้มค่าที่สุด</p>
-        </header>
-
-        <!-- Main Card -->
-        <div
-            class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800 p-6 md:p-8 transition-colors duration-300">
-
-            <!-- Items Container -->
-            <div id="items-container" class="space-y-4 mb-6">
-                <!-- Items will be injected here by JS. Initial 2 items hardcoded for SEO and fast loading -->
-
-                <!-- Item 1 (Cannot be deleted) -->
-                <div class="item-card relative bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-colors duration-300"
-                    data-id="1">
-                    <div
-                        class="absolute top-4 right-4 winner-badge hidden bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                        ✨ คุ้มที่สุด
+        <div id="items-container" class="space-y-2 flex-grow mb-6">
+            <!-- Item 1 -->
+            <div class="item-card bg-white dark:bg-gray-800 border-2 border-transparent shadow-sm rounded-xl p-2 transition-all duration-300 relative group" data-id="1">
+                <div class="grid grid-cols-[auto_1fr_1fr_auto] gap-x-2 items-center">
+                    <div class="w-6 text-center">
+                        <span class="text-xs font-bold text-gray-500 item-number bg-gray-100 dark:bg-gray-700 w-6 h-6 inline-flex items-center justify-center rounded-full">1</span>
                     </div>
-                    <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
-                        <span
-                            class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
-                        สินค้าชิ้นที่ 1
-                    </h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">ราคา
-                                (บาท)</label>
-                            <input type="number" min="0" step="0.01"
-                                class="price-input w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-colors"
-                                placeholder="เช่น 150">
-                        </div>
-                        <div>
-                            <label
-                                class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">ปริมาณ/จำนวน</label>
-                            <input type="number" min="0" step="0.01"
-                                class="amount-input w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-colors"
-                                placeholder="เช่น 100">
-                        </div>
+                    <div>
+                        <input type="number" min="0" step="0.01" class="price-input w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg px-2 py-1.5 text-sm transition-colors placeholder:text-gray-400" placeholder="0.00">
                     </div>
-                    <div class="mt-3 text-right text-sm text-slate-400 dark:text-slate-500 unit-price-display">
-                        ราคาต่อหน่วย: <span class="font-medium text-slate-600 dark:text-slate-300">-</span>
+                    <div>
+                        <input type="number" min="0" step="0.01" class="amount-input w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg px-2 py-1.5 text-sm transition-colors placeholder:text-gray-400" placeholder="1.00">
+                    </div>
+                    <div class="w-6 flex justify-center items-center">
+                        <!-- empty space for item 1 delete btn -->
                     </div>
                 </div>
-
-                <!-- Item 2 (Cannot be deleted) -->
-                <div class="item-card relative bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-colors duration-300"
-                    data-id="2">
-                    <div
-                        class="absolute top-4 right-4 winner-badge hidden bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                <div class="flex justify-between items-center mt-1.5 pl-[2.25rem] pr-1">
+                    <div class="unit-price-display text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                        <span class="font-bold text-gray-800 dark:text-gray-200 text-xs">-</span>
+                    </div>
+                    <div class="winner-badge hidden text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
                         ✨ คุ้มที่สุด
                     </div>
-                    <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
-                        <span
-                            class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-                        สินค้าชิ้นที่ 2
-                    </h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">ราคา
-                                (บาท)</label>
-                            <input type="number" min="0" step="0.01"
-                                class="price-input w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-colors"
-                                placeholder="เช่น 199">
-                        </div>
-                        <div>
-                            <label
-                                class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">ปริมาณ/จำนวน</label>
-                            <input type="number" min="0" step="0.01"
-                                class="amount-input w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-colors"
-                                placeholder="เช่น 150">
-                        </div>
-                    </div>
-                    <div class="mt-3 text-right text-sm text-slate-400 unit-price-display">
-                        ราคาต่อหน่วย: <span class="font-medium text-slate-600">-</span>
-                    </div>
                 </div>
-
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex flex-col items-center gap-3 mt-4 mb-8">
-                <button id="add-btn"
-                    class="group flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold py-2 px-5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 hover:text-indigo-700 dark:hover:text-indigo-300 transition-all active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 transform group-hover:rotate-90 transition-transform duration-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            <!-- Item 2 -->
+            <div class="item-card bg-white dark:bg-gray-800 border-2 border-transparent shadow-sm rounded-xl p-2 transition-all duration-300 relative group" data-id="2">
+                <div class="grid grid-cols-[auto_1fr_1fr_auto] gap-x-2 items-center">
+                    <div class="w-6 text-center">
+                        <span class="text-xs font-bold text-gray-500 item-number bg-gray-100 dark:bg-gray-700 w-6 h-6 inline-flex items-center justify-center rounded-full">2</span>
+                    </div>
+                    <div>
+                        <input type="number" min="0" step="0.01" class="price-input w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg px-2 py-1.5 text-sm transition-colors placeholder:text-gray-400" placeholder="0.00">
+                    </div>
+                    <div>
+                        <input type="number" min="0" step="0.01" class="amount-input w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg px-2 py-1.5 text-sm transition-colors placeholder:text-gray-400" placeholder="1.00">
+                    </div>
+                    <div class="w-6 flex justify-center items-center">
+                        <!-- empty space for item 2 delete btn -->
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-1.5 pl-[2.25rem] pr-1">
+                    <div class="unit-price-display text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                        <span class="font-bold text-gray-800 dark:text-gray-200 text-xs">-</span>
+                    </div>
+                    <div class="winner-badge hidden text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                        ✨ คุ้มที่สุด
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 w-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 p-3 pb-safe z-50">
+            <div class="max-w-xl mx-auto flex gap-3 items-center">
+                <button id="add-btn" class="flex-1 flex items-center justify-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-bold py-3 rounded-xl border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors shadow-sm focus:outline-none active:scale-95 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
-                    เพิ่มรายการเปรียบเทียบ
+                    เพิ่มรายการ
                 </button>
-                <button id="clear-btn"
-                    class="group flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium py-1.5 px-4 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-all active:scale-95 text-sm shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <button id="clear-btn" class="flex-1 flex items-center justify-center gap-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold py-3 rounded-xl border border-red-100 dark:border-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors shadow-sm focus:outline-none active:scale-95 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                     ล้างข้อมูล
                 </button>
             </div>
-
-            <!-- Result Summary Area -->
-            <div id="result-summary"
-                class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg transform transition-all duration-500 opacity-90">
-                <div class="text-center">
-                    <p class="text-indigo-100 text-sm font-medium mb-1">ผลการเปรียบเทียบ</p>
-                    <h2 id="result-text" class="text-2xl font-bold">รอข้อมูล...</h2>
-                    <p id="result-subtext"
-                        class="text-indigo-100 text-sm mt-2 opacity-0 transition-opacity duration-300">
-                        กรุณากรอกราคาและปริมาณของสินค้าอย่างน้อย 2 รายการ
-                    </p>
-                </div>
-            </div>
-
         </div>
 
-        <footer class="mt-12 text-slate-400 text-sm text-center">
-            <p>Made for comparison purposes. Easy to deploy on GitHub Pages.</p>
-        </footer>
     </main>
 
     <script>
-        // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(registration => {
-                    console.log('SW registered: ', registration.scope);
-                }).catch(err => {
-                    console.log('SW registration failed: ', err);
-                });
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
     </script>
     <script src="script.js"></script>
 </body>
-
 </html>

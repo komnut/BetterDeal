@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIconLight = document.getElementById('theme-icon-light');
     const themeIconDark = document.getElementById('theme-icon-dark');
-    const resultText = document.getElementById('result-text');
-    const resultSubtext = document.getElementById('result-subtext');
 
     let itemCount = 2; // We start with 2 items
 
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Initial icon state
     updateThemeIcon(document.documentElement.classList.contains('dark'));
 
     themeToggleBtn.addEventListener('click', () => {
@@ -52,17 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset styles
             card.classList.remove('best-deal-highlight');
             winnerBadge.classList.add('hidden');
-            winnerBadge.classList.remove('badge-winner');
 
             if (priceInput && amountInput && parseFloat(priceInput) > 0 && parseFloat(amountInput) > 0) {
                 const price = parseFloat(priceInput);
                 const amount = parseFloat(amountInput);
                 const unitPrice = price / amount;
 
-                // Format unit price for display
+                // Format unit price to exactly 2 decimal places
                 unitPriceDisplay.textContent = unitPrice.toLocaleString('th-TH', {
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 6
+                    maximumFractionDigits: 2
                 }) + ' บาท';
 
                 validItems.push({
@@ -78,46 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Determine the best deal
         if (validItems.length >= 2) {
             // Sort by unit price ascending
             validItems.sort((a, b) => a.unitPrice - b.unitPrice);
 
             const bestItem = validItems[0];
-            const secondBestItem = validItems[1]; // for calculating savings
 
             // Highlight best item
             bestItem.card.classList.add('best-deal-highlight');
             const badge = bestItem.card.querySelector('.winner-badge');
+            
+            badge.innerHTML = `✨ คุ้มที่สุด`;
+            
             badge.classList.remove('hidden');
-
-            // Trigger reflow to restart animation
-            void badge.offsetWidth;
-            badge.classList.add('badge-winner');
-
-            // Update result text
-            resultText.textContent = `สินค้าชิ้นที่ ${bestItem.index} คุ้มที่สุด! 🎉`;
-
-            // Calculate how much cheaper it is compared to second best
-            if (secondBestItem.unitPrice > bestItem.unitPrice) {
-                const diffPerc = ((secondBestItem.unitPrice - bestItem.unitPrice) / secondBestItem.unitPrice) * 100;
-                resultSubtext.textContent = `ประหยัดกว่าประมาณ ${diffPerc.toFixed(1)}% ต่อหน่วย`;
-                resultSubtext.classList.remove('opacity-0');
-            } else {
-                resultSubtext.textContent = 'ราคาต่อหน่วยเท่ากัน';
-                resultSubtext.classList.remove('opacity-0');
-            }
-
-        } else if (validItems.length === 1) {
-            resultText.textContent = 'รอข้อมูลอีกรายการ...';
-            resultSubtext.classList.add('opacity-0');
-        } else {
-            resultText.textContent = 'รอข้อมูล...';
-            resultSubtext.classList.add('opacity-0');
         }
     };
 
-    // Attach event listeners to existing inputs
     const attachListeners = (card) => {
         const inputs = card.querySelectorAll('input');
         inputs.forEach(input => {
@@ -125,46 +97,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Initialize existing cards
     document.querySelectorAll('.item-card').forEach(attachListeners);
 
-    // Handle Adding new items
     addBtn.addEventListener('click', () => {
-        itemCount++;
+        itemCount++; 
         const newItemId = itemCount;
+        const displayNum = document.querySelectorAll('.item-card').length + 1;
 
         const newCardHTML = `
-            <div class="item-card relative bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-all duration-300 transform scale-95 opacity-0 animate-fadeIn" data-id="${newItemId}">
-                <div class="absolute top-4 right-4 winner-badge hidden bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                    ✨ คุ้มที่สุด
-                </div>
-                
-                <h3 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
-                    <span class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 w-6 h-6 rounded-full flex items-center justify-center text-sm">${newItemId}</span>
-                    สินค้าชิ้นที่ ${newItemId}
-                </h3>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">ราคา (บาท)</label>
-                        <input type="number" min="0" step="0.01" class="price-input w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-colors" placeholder="เช่น 150">
+            <div class="item-card bg-white dark:bg-gray-800 border-2 border-transparent shadow-sm rounded-xl p-2 transition-all duration-300 relative group transform scale-95 opacity-0" data-id="${newItemId}">
+                <div class="grid grid-cols-[auto_1fr_1fr_auto] gap-x-2 items-center">
+                    <div class="w-6 text-center">
+                        <span class="text-xs font-bold text-gray-500 item-number bg-gray-100 dark:bg-gray-700 w-6 h-6 inline-flex items-center justify-center rounded-full">${displayNum}</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">ปริมาณ/จำนวน</label>
-                        <input type="number" min="0" step="0.01" class="amount-input w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-colors" placeholder="เช่น 100">
+                        <input type="number" min="0" step="0.01" class="price-input w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg px-2 py-1.5 text-sm transition-colors placeholder:text-gray-400" placeholder="0.00">
+                    </div>
+                    <div>
+                        <input type="number" min="0" step="0.01" class="amount-input w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg px-2 py-1.5 text-sm transition-colors placeholder:text-gray-400" placeholder="1.00">
+                    </div>
+                    <div class="w-6 flex justify-center items-center">
+                        <button class="delete-btn text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 p-1 rounded-lg transition-colors" title="ลบรายการ">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-                <!-- Delete Button Container -->
-                <div class="mt-3 flex justify-between items-center">
-                    <button class="delete-btn flex items-center gap-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-sm" aria-label="Delete item">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        ลบ
-                    </button>
-                    <!-- Unit Price display inside flex container -->
-                    <div class="text-right text-sm text-slate-400 dark:text-slate-500 unit-price-display">
-                        ราคาต่อหน่วย: <span class="font-medium text-slate-600 dark:text-slate-300">-</span>
+                <div class="flex justify-between items-center mt-1.5 pl-[2.25rem] pr-1">
+                    <div class="unit-price-display text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                        <span class="font-bold text-gray-800 dark:text-gray-200 text-xs">-</span>
+                    </div>
+                    <div class="winner-badge hidden text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                        ✨ คุ้มที่สุด
                     </div>
                 </div>
             </div>
@@ -178,38 +143,31 @@ document.addEventListener('DOMContentLoaded', () => {
         newCard.classList.remove('scale-95', 'opacity-0');
         newCard.classList.add('scale-100', 'opacity-100');
 
-        // Attach listeners to new inputs
         attachListeners(newCard);
 
-        // Setup delete button
         const deleteBtn = newCard.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', () => {
-            // Animate out
             newCard.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 newCard.remove();
                 reindexCards();
                 calculateBestDeal();
-            }, 300); // Wait for transition
+            }, 300);
         });
 
         // Scroll to new item gently
         newCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
-    // Clear Button Logic
     clearBtn.addEventListener('click', () => {
-        // Remove extra cards beyond the first 2
         const allCards = document.querySelectorAll('.item-card');
         for (let i = 2; i < allCards.length; i++) {
             allCards[i].remove();
         }
 
-        // Reset count
         itemCount = 2;
         reindexCards();
 
-        // Clear values in remaining cards
         document.querySelectorAll('.item-card').forEach(card => {
             card.querySelector('.price-input').value = '';
             card.querySelector('.amount-input').value = '';
@@ -218,25 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateBestDeal();
     });
 
-    // Helper to re-number the cards displayed (e.g. 1, 2, 3...) when one is deleted
     const reindexCards = () => {
         let displayIndex = 1;
         document.querySelectorAll('.item-card').forEach((card) => {
-            // Update the number in the circle badge
-            const circleBadge = card.querySelector('h3 span');
-            if (circleBadge) circleBadge.textContent = displayIndex;
-
-            // Update the text node part of the H3 header carefully without breaking HTML structure
-            const h3 = card.querySelector('h3');
-
-            h3.childNodes.forEach(node => {
-                // If it's a direct text node starting with our prefix
-                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().startsWith('สินค้าชิ้นที่')) {
-                    node.textContent = ` สินค้าชิ้นที่ ${displayIndex} `;
-                }
-            });
+            const numberSpan = card.querySelector('.item-number');
+            if (numberSpan) {
+                numberSpan.textContent = displayIndex;
+            }
             displayIndex++;
         });
-        // We do *not* decrement itemCount, just reindex display numbers so internal IDs stay unique
     };
 });
