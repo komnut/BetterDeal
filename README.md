@@ -49,11 +49,11 @@
 
 1. โคลน Repository นี้:
    ```bash
-   git clone https://github.com/yourusername/better-deal.git
+   git clone https://github.com/yourusername/BetterDeal.git
    ```
 2. เข้าไปในโฟลเดอร์:
    ```bash
-   cd better-deal
+   cd BetterDeal
    ```
 3. เปิดไฟล์ `index.html` บนเบราว์เซอร์
    *(หมายเหตุ: ส่วนของ Service Workers เพื่อให้รันออฟไลน์แบบ PWA ได้ อาจจะต้องรันผ่าน Local Server เช่น ใช้ปลั๊กอิน Live Server ใน VS Code หรือคำสั่ง `python -m http.server`)*
